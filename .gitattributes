@@ -1,0 +1,5 @@
+# Exclude internal benchmark artifacts and evidence docs from `git archive` exports.
+# These files reference private monorepo paths (X:/coordinator-claude/, X:/experiments/)
+# and aren't intended for downstream consumers.
+docs/research/pipeline-benchmark/ export-ignore
+docs/research/2026-03-31-deep-research-pipeline-evidence.md export-ignore
