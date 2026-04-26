@@ -22,6 +22,7 @@ agents/structured-synthesizer.md
 # Commands
 commands/repo.md
 commands/research.md
+commands/setup.md
 commands/structured.md
 commands/web.md
 
@@ -31,8 +32,10 @@ pipelines/spec-format.md
 pipelines/eval-rubric.md
 pipelines/gap-specialist-prompt-template.md
 pipelines/repo-atlas-prompt-template.md
+pipelines/repo-atlas-sketch-prompt-template.md
 pipelines/repo-scout-prompt-template.md
 pipelines/repo-specialist-prompt-template.md
+pipelines/repo-survey-prompt-template.md
 pipelines/repo-synthesizer-prompt-template.md
 pipelines/repo-team-protocol.md
 pipelines/scout-prompt-template.md

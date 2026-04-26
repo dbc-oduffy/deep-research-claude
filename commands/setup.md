@@ -65,21 +65,56 @@ command -v notebooklm-mcp 2>/dev/null || npx --yes notebooklm-mcp --version 2>/d
 ```
 
 - If found: ready.
-- If not found: Pipeline D requires the `notebooklm-mcp-cli` package. Install with:
+- If not found: the bundled `.mcp.json` invokes `npx -y notebooklm-mcp`, so a global install is not required — `npx` will fetch on first launch. For faster startup, optionally install globally:
   ```bash
-  npm install -g notebooklm-mcp-cli
+  npm install -g notebooklm-mcp
   ```
-  Or see https://github.com/jacob-bd/notebooklm-mcp-cli
+  Pipeline D requires `npx` (ships with Node.js). If `npx` itself is missing, install Node.js first.
 
-### 3b. Authentication
+### 3b. Sub-plugin enablement
 
-Note that NotebookLM requires Google account authentication. The user must run `nlm login` in their terminal (outside Claude Code) to authenticate. This handles OAuth flow and session cookie extraction.
+The NotebookLM sub-plugin is disabled by default. Probe whether it's currently enabled:
+
+```bash
+SETTINGS="$HOME/.claude/settings.json"
+if [ -f "$SETTINGS" ]; then
+  if grep -qE '"(plugin_)?deep-research:notebooklm"\s*:\s*true' "$SETTINGS" 2>/dev/null \
+     || grep -qE '"notebooklm"\s*:\s*true' "$SETTINGS" 2>/dev/null; then
+    echo "notebooklm sub-plugin: enabled"
+  else
+    echo "notebooklm sub-plugin: NOT enabled (Pipeline D will not work until enabled)"
+  fi
+else
+  echo "notebooklm sub-plugin: settings.json not found"
+fi
+```
+
+If not enabled, instruct the user: enable the `notebooklm` sub-plugin in `~/.claude/settings.json` and restart Claude Code. Disable again after Pipeline D work to keep context lean.
+
+### 3c. MCP health probe
+
+If the notebooklm MCP server is running in the current session, ping it:
+
+- If `mcp__notebooklm__get_health` is available as a tool, call it and report the result. A healthy response confirms end-to-end connectivity (tool surface → MCP server → NotebookLM auth).
+- If the tool is **not** available, the sub-plugin is not loaded into this session — note that and skip.
+- If the call fails (auth error, server unreachable), surface the error verbatim and recommend running `nlm login` in the terminal.
+
+### 3d. Authentication
+
+NotebookLM requires Google account authentication. The user must run `nlm login` in their terminal (outside Claude Code) to authenticate. This handles OAuth flow and session cookie extraction.
 
 If auth expires mid-session, the `refresh_auth` MCP tool or re-running `nlm login` will fix it.
 
-### 3c. Enable/disable guidance
+---
 
-Note that the NotebookLM sub-plugin is kept disabled by default to reduce context load. The user should enable it in `~/.claude/settings.json` before running Pipeline D research, and disable it after.
+## 3.5. WebSearch / WebFetch Tool Availability
+
+Pipelines A and D depend on `WebSearch` and `WebFetch`. Some Claude Code configs disable these tools (per-project allowed-tools restrictions, sandbox modes, or older Claude Code versions).
+
+Probe by examining the available tool surface in the current session:
+
+- If both `WebSearch` and `WebFetch` are present: ready.
+- If either is missing: **warn loudly** in the status report. Pipelines A and D will fail. Recommend the user check `~/.claude/settings.json` (and any project-local `.claude/settings.json`) for `permissions.deny` rules that block these tools, or upgrade Claude Code if the version predates them.
 
 ---
 
@@ -91,11 +126,15 @@ Note that the NotebookLM sub-plugin is kept disabled by default to reduce contex
 | Check                       | Status |
 |-----------------------------|--------|
 | Agent Teams env var         | ... (REQUIRED) |
+| WebSearch tool              | ... (REQUIRED for Pipelines A/D) |
+| WebFetch tool               | ... (REQUIRED for Pipelines A/D) |
 | Pipeline A (web)            | ... |
 | Pipeline B (repo)           | ... |
 | Pipeline C (structured)     | ... |
-| Pipeline D (notebooklm)    | ... |
-| NotebookLM MCP CLI         | ... (if Pipeline D) |
+| Pipeline D (notebooklm)     | ... |
+| NotebookLM MCP CLI          | ... (if Pipeline D) |
+| NotebookLM sub-plugin       | enabled / disabled |
+| NotebookLM MCP health       | ... (mcp__notebooklm__get_health) |
 | NotebookLM auth             | run `nlm login` in terminal |
 
 ### Available commands

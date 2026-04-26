@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-`superpowers` (obra/superpowers, 131k stars) and `coordinator-claude` (oduffy-delphi/coordinator-claude) are both Claude Code plugin systems that enforce structured development workflows through skills, agents, hooks, and commands. They share a surprising amount of DNA — both grew out of the same upstream `superpowers` codebase, and many skills in `coordinator-claude` are direct forks of `superpowers` originals. But the systems have diverged significantly in design philosophy:
+`superpowers` (obra/superpowers, 131k stars) and `coordinator-claude` (dbc-oduffy/coordinator-claude) are both Claude Code plugin systems that enforce structured development workflows through skills, agents, hooks, and commands. They share a surprising amount of DNA — both grew out of the same upstream `superpowers` codebase, and many skills in `coordinator-claude` are direct forks of `superpowers` originals. But the systems have diverged significantly in design philosophy:
 
 - **superpowers** is a zero-dependency, single-plugin, broadly portable system focused on the developer workflow: brainstorm → plan → TDD implementation → review. Its north star is reproducible engineering discipline, enforced via tightly-written skills and a single session-start hook that injects the `using-superpowers` skill.
 
