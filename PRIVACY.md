@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**deep-research** — a Claude Code plugin by [Dónal O'Duffy](https://github.com/oduffy-delphi)
+**deep-research** — a Claude Code plugin by [Dónal O'Duffy](https://github.com/dbc-oduffy)
 
 Last updated: 2026-04-02
 
@@ -30,8 +30,8 @@ This plugin does not introduce any third-party service relationships beyond what
 
 ## Source code
 
-This plugin is fully open source. You can audit every agent prompt, pipeline protocol, and command at [github.com/oduffy-delphi/deep-research-claude](https://github.com/oduffy-delphi/deep-research-claude).
+This plugin is fully open source. You can audit every agent prompt, pipeline protocol, and command at [github.com/dbc-oduffy/deep-research-claude](https://github.com/dbc-oduffy/deep-research-claude).
 
 ## Contact
 
-Questions about this policy: open an issue on the [GitHub repository](https://github.com/oduffy-delphi/deep-research-claude/issues).
+Questions about this policy: open an issue on the [GitHub repository](https://github.com/dbc-oduffy/deep-research-claude/issues).

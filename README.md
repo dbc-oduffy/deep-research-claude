@@ -11,7 +11,7 @@ These pipelines delegate research to agent teams so your top-level Claude stays 
 ## Quick Start
 
 ```bash
-git clone https://github.com/oduffy-delphi/deep-research-claude.git
+git clone https://github.com/dbc-oduffy/deep-research-claude.git
 cd deep-research-claude
 bash setup/install.sh
 ```
@@ -93,7 +93,7 @@ All pipelines are fire-and-forget — the EM spawns the team and is freed. Resul
 
 ## Integration with coordinator
 
-This plugin works standalone. When used alongside the [coordinator plugin](https://github.com/oduffy-delphi/coordinator-claude), the EM automatically suggests research pipelines via a `PreToolUse` hook when Claude reaches for ad-hoc web search — nudging toward these structured pipelines instead of one-off `WebFetch` calls that consume the coordinator's context window.
+This plugin works standalone. When used alongside the [coordinator plugin](https://github.com/dbc-oduffy/coordinator-claude), the EM automatically suggests research pipelines via a `PreToolUse` hook when Claude reaches for ad-hoc web search — nudging toward these structured pipelines instead of one-off `WebFetch` calls that consume the coordinator's context window.
 
 ## Research Backing
 
@@ -101,7 +101,7 @@ Pipeline design derives from published guidance (OpenAI, Perplexity, Google, Ant
 
 ## Source of Truth
 
-This is the canonical home of the deep-research plugin. Originally developed as part of [coordinator-claude](https://github.com/oduffy-delphi/coordinator-claude) and extracted for independent distribution.
+This is the canonical home of the deep-research plugin. Originally developed as part of [coordinator-claude](https://github.com/dbc-oduffy/coordinator-claude) and extracted for independent distribution.
 
 ## Acknowledgements
 
@@ -109,4 +109,4 @@ Pipeline D is built on [notebooklm-mcp-cli](https://github.com/jacob-bd/notebook
 
 ---
 
-[Dónal O'Duffy](https://github.com/oduffy-delphi) & Claude
+[Dónal O'Duffy](https://github.com/dbc-oduffy) & Claude

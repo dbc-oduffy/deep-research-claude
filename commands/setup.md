@@ -65,11 +65,11 @@ command -v notebooklm-mcp 2>/dev/null || npx --yes notebooklm-mcp --version 2>/d
 ```
 
 - If found: ready.
-- If not found: Pipeline D requires the `notebooklm-mcp` package. Install with:
+- If not found: the bundled `.mcp.json` invokes `npx -y notebooklm-mcp`, so a global install is not required — `npx` will fetch on first launch. For faster startup, optionally install globally:
   ```bash
   npm install -g notebooklm-mcp
   ```
-  (Or rely on the bundled `npx` invocation — the .mcp.json fallback will work without a global install.)
+  Pipeline D requires `npx` (ships with Node.js). If `npx` itself is missing, install Node.js first.
 
 ### 3b. Sub-plugin enablement
 
