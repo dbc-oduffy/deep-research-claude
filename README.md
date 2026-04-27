@@ -95,6 +95,16 @@ All pipelines are fire-and-forget — the EM spawns the team and is freed. Resul
 
 This plugin works standalone. When used alongside the [coordinator plugin](https://github.com/dbc-oduffy/coordinator-claude), the EM automatically suggests research pipelines via a `PreToolUse` hook when Claude reaches for ad-hoc web search — nudging toward these structured pipelines instead of one-off `WebFetch` calls that consume the coordinator's context window.
 
+### Optional dependency: `coordinator-safe-commit`
+
+Pipeline commands (`/web`, `/repo`, `/structured`) invoke `~/.claude/plugins/coordinator-claude/coordinator/bin/coordinator-safe-commit` for phase-end commits. The helper provides scoped staging (per-session audit-trail integrity) for users running multiple concurrent agent sessions on the same branch.
+
+**If you have the coordinator plugin installed,** no action needed — the helper is on the expected path.
+
+**If running deep-research standalone,** substitute either form when you encounter the command:
+- `git add <explicit-paths> && git commit -m "<subject>"` — manual scoped staging
+- `git add -A && git commit -m "<subject>"` — blanket staging (acceptable for solo single-session use)
+
 ## Research Backing
 
 Pipeline design derives from published guidance (OpenAI, Perplexity, Google, Anthropic, Stanford STORM) and is validated through [controlled experiments](docs/research/2026-03-31-deep-research-pipeline-evidence.md). Anthropic independently built a [production multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) using the same core pattern — their eval showed 90.2% improvement over single-agent. We converged on the same architecture independently; this system extends it with Haiku scouts for cost efficiency, adversarial peer dynamics between specialists, and asynchronous orchestrator dispatch.
