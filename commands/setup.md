@@ -12,6 +12,18 @@ If `$ARGUMENTS` contains `--check-only`, report status without making changes.
 
 ---
 
+## 0. Shell environment
+
+This command runs bash snippets via Claude Code's tool sandbox. On **Windows**, that requires `bash.exe` from [Git for Windows](https://git-scm.com/download/win) (or WSL). Probe first — if this fails, every later check will too:
+
+```bash
+bash --version 2>&1 | head -1 || echo "bash: NOT FOUND — Pipeline D and these checks need Git for Windows or WSL"
+```
+
+If bash is missing on Windows, instruct the user to install Git for Windows (`winget install Git.Git`) and re-run `/setup`. Do **not** continue with the rest of the checks until bash resolves; on a non-Windows host this is a no-op.
+
+---
+
 ## 1. Agent Teams (required)
 
 ```bash
@@ -56,7 +68,23 @@ Report:
 
 **Skip this section if the notebooklm sub-plugin is not installed.**
 
-### 3a. MCP server CLI
+### 3a. Node.js runtime (Pipeline D requirement)
+
+The bundled `.mcp.json` invokes `npx -y notebooklm-mcp`, so Pipeline D needs **Node.js 18+** (which ships with `npm` and `npx`). Probe explicitly **before** trying npx — a bare `npx` failure is a confusing way for a colleague to discover they're missing Node.
+
+```bash
+node --version 2>/dev/null || echo "node: NOT FOUND"
+npm --version 2>/dev/null || echo "npm: NOT FOUND"
+```
+
+- If `node` is missing or below v18: **hard fail** the Pipeline D check. Recommend the user install Node.js LTS:
+  - **Windows:** `winget install OpenJS.NodeJS.LTS`
+  - **macOS:** `brew install node`
+  - **Linux:** `sudo apt install nodejs npm` (or use [nodesource](https://github.com/nodesource/distributions) for current LTS)
+- If `node` is present but `npm` is missing: instruct the user to reinstall Node.js from the official LTS installer (npm ships bundled). Common cause: a minimal/custom Node build, or an `nvm`/`fnm` install that needs `nvm use <version>` first.
+- If both are present: continue to the MCP server probe below.
+
+### 3b. MCP server CLI
 
 Check if `notebooklm-mcp` is available:
 
@@ -69,9 +97,8 @@ command -v notebooklm-mcp 2>/dev/null || npx --yes notebooklm-mcp --version 2>/d
   ```bash
   npm install -g notebooklm-mcp
   ```
-  Pipeline D requires `npx` (ships with Node.js). If `npx` itself is missing, install Node.js first.
 
-### 3b. Sub-plugin enablement
+### 3c. Sub-plugin enablement
 
 The NotebookLM sub-plugin is disabled by default. Probe whether it's currently enabled:
 
@@ -91,7 +118,7 @@ fi
 
 If not enabled, instruct the user: enable the `notebooklm` sub-plugin in `~/.claude/settings.json` and restart Claude Code. Disable again after Pipeline D work to keep context lean.
 
-### 3c. MCP health probe
+### 3d. MCP health probe
 
 If the notebooklm MCP server is running in the current session, ping it:
 
@@ -99,7 +126,7 @@ If the notebooklm MCP server is running in the current session, ping it:
 - If the tool is **not** available, the sub-plugin is not loaded into this session — note that and skip.
 - If the call fails (auth error, server unreachable), surface the error verbatim and recommend running `nlm login` in the terminal.
 
-### 3d. Authentication
+### 3e. Authentication
 
 NotebookLM requires Google account authentication. The user must run `nlm login` in their terminal (outside Claude Code) to authenticate. This handles OAuth flow and session cookie extraction.
 
@@ -125,6 +152,7 @@ Probe by examining the available tool surface in the current session:
 
 | Check                       | Status |
 |-----------------------------|--------|
+| bash (Windows: git-bash/WSL) | ... (REQUIRED on Windows) |
 | Agent Teams env var         | ... (REQUIRED) |
 | WebSearch tool              | ... (REQUIRED for Pipelines A/D) |
 | WebFetch tool               | ... (REQUIRED for Pipelines A/D) |
@@ -132,6 +160,8 @@ Probe by examining the available tool surface in the current session:
 | Pipeline B (repo)           | ... |
 | Pipeline C (structured)     | ... |
 | Pipeline D (notebooklm)     | ... |
+| Node.js >= 18               | ... (REQUIRED for Pipeline D) |
+| npm                         | ... (REQUIRED for Pipeline D) |
 | NotebookLM MCP CLI          | ... (if Pipeline D) |
 | NotebookLM sub-plugin       | enabled / disabled |
 | NotebookLM MCP health       | ... (mcp__notebooklm__get_health) |

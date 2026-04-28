@@ -1,5 +1,5 @@
 ---
-description: "Pipeline A v2.2 (Internet Research) using Agent Teams — collaborative research with a Haiku scout, Sonnet specialists (adversarial peers with structured output), and an Opus sweep agent, all as teammates. EM scopes research, spawns the team, and is freed. The team works autonomously with optional iterative deepening: after Team 1 completes, the EM evaluates the gap report and may dispatch a smaller Team 2 for targeted follow-up."
+description: "PM-GATED — only invoke when the PM explicitly asks; EM must ask first if it thinks it's warranted; NEVER invoke from a subagent. Pipeline A v2.2 (Internet Research) using Agent Teams — collaborative research with a Haiku scout, Sonnet specialists (adversarial peers with structured output), and an Opus sweep agent, all as teammates. EM scopes research, spawns the team, and is freed. The team works autonomously with optional iterative deepening: after Team 1 completes, the EM evaluates the gap report and may dispatch a smaller Team 2 for targeted follow-up."
 allowed-tools: ["Agent", "Read", "Write", "Bash", "Glob", "Grep", "TeamCreate", "TeamDelete", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet", "SendMessage"]
 argument-hint: "<topic>"
 ---
@@ -184,7 +184,7 @@ When you receive a notification that the sweep task is complete:
 4. Read the gap report at `{scratch-dir}/gap-report.md`
 5. Commit:
    ```bash
-   git add -A && git commit -m "deep-research: Team 1 complete — {topic-slug}"
+   ~/.claude/plugins/coordinator-claude/coordinator/bin/coordinator-safe-commit "deep-research: Team 1 complete — {topic-slug}"
    ```
 6. Shut down Team 1: `TeamDelete(team_name: "research-{topic-slug}")`
 
@@ -323,7 +323,7 @@ When you receive a notification that the Team 2 sweep task is complete:
 
 6. Commit:
    ```bash
-   git add -A && git commit -m "deep-research: Team 2 deepening merged — {topic-slug}"
+   ~/.claude/plugins/coordinator-claude/coordinator/bin/coordinator-safe-commit "deep-research: Team 2 deepening merged — {topic-slug}"
    ```
 
 7. Shut down Team 2: `TeamDelete(team_name: "research-{topic-slug}-t2")`
@@ -338,7 +338,7 @@ When you receive a notification that the Team 2 sweep task is complete:
    cp -r {scratch-dir}/* docs/research/archive/YYYY-MM-DD-{topic-slug}/
    rm -rf {scratch-dir}
    ```
-2. Commit: `git add -A && git commit -m "deep-research: archive + cleanup — {topic-slug}"`
+2. Commit: `~/.claude/plugins/coordinator-claude/coordinator/bin/coordinator-safe-commit "deep-research: archive + cleanup — {topic-slug}"`
 3. Present executive summary to PM for discussion:
    - If deepening occurred: "Research complete (2 passes). Team 1 identified {gap_count} gaps ({high_severity_gaps} high-severity); Team 2 filled {N}. See synthesis at `{output-path}`."
    - If no deepening: "Research complete (single pass). Coverage score: {coverage_score}/5. See synthesis at `{output-path}`."

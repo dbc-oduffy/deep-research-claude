@@ -1,5 +1,5 @@
 ---
-description: "Pipeline C (Structured Research) using Agent Teams — schema-conforming research with a Haiku scout, Sonnet verifiers, and an Opus synthesizer, all as teammates. EM reads spec, pre-processes into scout-brief.md, spawns the team, and is freed. The team handles everything autonomously."
+description: "PM-GATED — only invoke when the PM explicitly asks; EM must ask first if it thinks it's warranted; NEVER invoke from a subagent. Pipeline C (Structured Research) using Agent Teams — schema-conforming research with a Haiku scout, Sonnet verifiers, and an Opus synthesizer, all as teammates. EM reads spec, pre-processes into scout-brief.md, spawns the team, and is freed. The team handles everything autonomously."
 allowed-tools: ["Agent", "Read", "Write", "Edit", "Bash", "Glob", "Grep", "TeamCreate", "TeamDelete", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet", "SendMessage"]
 argument-hint: "<spec-path> <subject-key>"
 ---
@@ -223,7 +223,7 @@ When you receive a notification that the synthesis task is complete:
 
 5. Commit:
    ```bash
-   git add -A && git commit -m "deep-research: structured complete — {subject-slug}"
+   ~/.claude/plugins/coordinator-claude/coordinator/bin/coordinator-safe-commit "deep-research: structured complete — {subject-slug}"
    ```
 
 6. Archive paper trail:
@@ -235,7 +235,7 @@ When you receive a notification that the synthesis task is complete:
 
 7. Shut down the team: `TeamDelete(team_name: "structured-{subject-slug}")`
 
-8. Commit: `git add -A && git commit -m "deep-research: structured archive + cleanup"`
+8. Commit: `~/.claude/plugins/coordinator-claude/coordinator/bin/coordinator-safe-commit "deep-research: structured archive + cleanup"`
 
 9. Present summary of schema changes (CONFIRMED / UPDATED / NEW / REFUTED / CONTESTED-resolved counts) to PM for review. If advisory exists, mention it: "The synthesizer flagged observations beyond scope — see the advisory (archived with paper trail at `docs/research/archive/YYYY-MM-DD-{subject-slug}/advisory.md`)."
 
