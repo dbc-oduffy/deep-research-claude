@@ -1,0 +1,14 @@
+#!/bin/bash
+# Convenience shim — delegates to the canonical coordinator-safe-commit helper.
+# Use this when committing in the publish repo to get scoped staging + session-aware
+# audit-trail protection. Without it, blanket `git add` can sweep concurrent-session
+# files into your commit (see d86c95e5 for the historical incident in claude-unreal-holodeck).
+#
+# Canonical invocation forms supported (passthrough):
+#   ./bin/safe-commit "<subject>"
+#   ./bin/safe-commit --scope-from <handoff> "<subject>"
+#   ./bin/safe-commit --blanket "<subject>"   # session-start / workday-complete only
+#   ./bin/safe-commit --dry-run "<subject>"
+#
+# See: ~/.claude/docs/wiki/scoped-safety-commits.md
+exec "$HOME/.claude/plugins/coordinator-claude/coordinator/bin/coordinator-safe-commit" "$@"
