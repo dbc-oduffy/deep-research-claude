@@ -2,6 +2,23 @@
 
 All notable changes to the deep-research plugin are documented here.
 
+## [1.2.2] - 2026-04-29
+
+Maintenance release: docs trim, contribution policy, and safe-commit shim.
+
+### Added
+
+- **`CONTRIBUTING.md`** — explicit maintainer-approval PR policy for the publish repo. Clarifies that this mirror accepts issues and discussion but PRs are merged at the maintainer's discretion (upstream development happens elsewhere).
+- **`bin/safe-commit`** — thin shim that delegates to `coordinator-safe-commit`. Gives publish-repo contributors the same scope-checking discipline as the upstream coordinator workflow without requiring the full plugin install.
+
+### Changed
+
+- **Trimmed `/deep-research` command docs.** `commands/repo.md` cut from 481→340 lines, `commands/web.md` from 360→233 lines. Phase-internal detail extracted to `pipelines/repo-internals.md` and `pipelines/web-internals.md` so command files stay focused on the user-facing contract.
+
+### Internal
+
+- Coordinator-safe-commit now optional dependency note added for standalone use.
+
 ## [1.2.1] - 2026-04-26
 
 Maintenance release: setup hardening and publish-manifest fixes.
