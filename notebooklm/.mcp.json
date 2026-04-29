@@ -1,7 +1,7 @@
 {
   "notebooklm": {
-    "command": "npx",
-    "args": ["-y", "notebooklm-mcp"],
+    "command": "cmd",
+    "args": ["/c", "notebooklm-mcp"],
     "env": {}
   }
 }
