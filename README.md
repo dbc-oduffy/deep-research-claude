@@ -8,22 +8,13 @@ You're mid-session, you need real research, and you don't want to break flow to 
 
 These pipelines delegate research to agent teams so your top-level Claude stays free. Results come back as committed markdown in `docs/research/` — artifacts, not chat messages.
 
-## Quick Start
+## Install
 
-```bash
-git clone https://github.com/dbc-oduffy/deep-research-claude.git
-cd deep-research-claude
-bash setup/install.sh
-```
+This is a Claude Code plugin. The first-class install path is to hand the job to your agent — paste the prompt below into a Claude Code session and let it follow the playbook in [`docs/install.md`](docs/install.md).
 
-Restart Claude Code. Requires the [Agent Teams experimental flag](https://docs.anthropic.com/en/docs/claude-code/agent-teams):
+> Please install the deep-research-claude plugin from https://github.com/dbc-oduffy/deep-research-claude. The repo's `docs/install.md` is the install playbook — read it and follow the steps. Verify by running `/deep-research setup` at the end and report the result.
 
-```json
-// in ~/.claude/settings.json under "env"
-"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-```
-
-Then:
+After the agent finishes, restart Claude Code (so the Agent Teams env var takes effect) and try:
 
 ```
 /deep-research web "agent orchestration patterns in LLM frameworks"

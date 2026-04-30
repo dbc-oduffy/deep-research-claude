@@ -2,6 +2,30 @@
 
 All notable changes to the deep-research plugin are documented here.
 
+## [1.3.0] - 2026-04-30
+
+Agent-driven install becomes the first-class path. Also a checkpoint: rolling up state-of-the-plugin notes for anyone arriving since the last release.
+
+### Changed
+
+- **Install is now agent-first.** README's lead install instruction is a paste-to-agent prompt, not a shell script. The agent reads [`docs/install.md`](docs/install.md) — a structured playbook covering install, update, uninstall, optional Pipeline D / NotebookLM, verification via `/deep-research setup`, and troubleshooting — and executes the steps. Manual steps still live at the bottom of the same file for humans who want them.
+- **Removed dead `bash setup/install.sh` reference** from README. The script never existed in the publish repo; the prior README pointed at a path that returned 404.
+
+### Added
+
+- **`docs/install.md`** — canonical install playbook. Single source of truth for the agent's install paper trail; covers Windows + POSIX paths, Pipeline D opt-in, and a per-symptom troubleshooting table.
+
+### State of the plugin (recap)
+
+For consumers arriving fresh, here's what `1.3.0` ships:
+
+- **Pipeline A (Internet Research)** — Haiku scout + 3-5 Sonnet specialists with adversarial peer challenges + Opus sweep with iterative deepening for high-severity gaps.
+- **Pipeline B (Repo Research)** — 2 Haiku scouts + 4 Sonnet specialists + Opus synthesizer. `--compare` produces gap-analysis vs. your project; `--deeper` adds dependency-weighted repomap; `--deepest` adds three-phase atlas generation (file index, system map, connectivity matrix, architecture summary).
+- **Pipeline C (Structured Research v2.1)** — schema-conforming batch research with adversarial peer challenges, CONTESTED-field resolution, and an output-first synthesizer (skeleton → reconcile → validate → overwrite).
+- **Pipeline D (NotebookLM Media Research)** — opt-in sub-plugin for YouTube / podcasts / audio Claude can't directly access. Disabled by default to keep context light; enable per-session.
+- **`/deep-research setup`** — health check that reports per-pipeline status; canonical install verification command.
+- **Standalone-friendly** — `bin/safe-commit` shim provides the same scope-checking discipline as the upstream coordinator workflow without requiring the full plugin.
+
 ## [1.2.2] - 2026-04-29
 
 Maintenance release: docs trim, contribution policy, and safe-commit shim.
