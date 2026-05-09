@@ -5,8 +5,16 @@
 # Manifest mode: selective copy, no delete. Target has extra files
 # (README.md, LICENSE, docs/) that don't exist in source.
 
-# No SCAN directive — source root IS the plugin dir (no subdirectories to scan).
-# Staleness is caught by the manifest file list itself.
+# Staleness scan: SCAN: <subdir> directives walk that source subdir on every
+# /percolate run and warn for any file not listed in the manifest below. Without
+# them, drift goes silent (proven by the May 2026 driver-file gap — three
+# load-bearing pipeline files lived in source for ~10 days while the manifest
+# claimed coverage). Add new subdirs here as the plugin grows.
+SCAN: agents
+SCAN: commands
+SCAN: pipelines
+SCAN: skills
+SCAN: notebooklm
 
 # Config
 CLAUDE.md
@@ -31,6 +39,8 @@ pipelines/eval-rubric.md
 pipelines/gap-specialist-prompt-template.md
 pipelines/repo-atlas-prompt-template.md
 pipelines/repo-atlas-sketch-prompt-template.md
+pipelines/repo-driver.md
+pipelines/repo-research-internals.md
 pipelines/repo-scout-prompt-template.md
 pipelines/repo-specialist-prompt-template.md
 pipelines/repo-survey-prompt-template.md
@@ -38,11 +48,14 @@ pipelines/repo-synthesizer-prompt-template.md
 pipelines/repo-team-protocol.md
 pipelines/scout-prompt-template.md
 pipelines/specialist-prompt-template.md
+pipelines/structured-driver.md
 pipelines/structured-scout-prompt-template.md
 pipelines/structured-synthesizer-prompt-template.md
 pipelines/structured-team-protocol.md
 pipelines/structured-verifier-prompt-template.md
 pipelines/team-protocol.md
+pipelines/web-driver.md
+pipelines/web-research-internals.md
 
 # Skills
 skills/eval-output.md
