@@ -2,6 +2,19 @@
 
 All notable changes to the deep-research plugin are documented here.
 
+## [1.3.1] - 2026-05-09
+
+Patch release. Scout hardening + small skill-surface tightening; no behavioral changes for end users.
+
+### Changed
+
+- **Repo + Internet scouts hardened against TEXT-ONLY hallucination.** Scouts now write the deliverable to disk and only emit `DONE: <path>` after verifying the file exists; inline summaries without a written file count as task failure. Aligns Pipeline A and B scouts with the coordinator-side text-only-recovery preamble snippet.
+- **Skill descriptions trimmed to the 150/175-char description budget** across pipeline-facing skills; surface unchanged.
+
+### Fixed
+
+- **`agents/repo-scout.md`, `agents/repo-specialist.md`, `pipelines/repo-{scout,specialist}-prompt-template.md`, `skills/eval-output.md`** updated in lockstep; `commands/research.md` reflects current `--mode` flag wording.
+
 ## [1.3.0] - 2026-04-30
 
 Agent-driven install becomes the first-class path. Also a checkpoint: rolling up state-of-the-plugin notes for anyone arriving since the last release.

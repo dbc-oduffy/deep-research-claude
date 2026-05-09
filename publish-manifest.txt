@@ -20,11 +20,9 @@ agents/research-synthesizer.md
 agents/structured-synthesizer.md
 
 # Commands
-commands/repo.md
+# (repo.md, structured.md, web.md collapsed into research.md --mode in v1.3.0)
 commands/research.md
 commands/setup.md
-commands/structured.md
-commands/web.md
 
 # Pipelines
 pipelines/PIPELINE.md
