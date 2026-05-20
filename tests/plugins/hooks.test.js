@@ -89,7 +89,7 @@ describe('hook configuration and script validity', () => {
                   assert.ok(fileExists(scriptPath), `Script file not found: ${scriptPath}`);
                 });
 
-                it('script syntax is valid', () => {
+                it('script syntax is valid', { skip: process.env.FAST === '1' ? 'FAST mode' : false }, () => {
                   if (typeof hook.command !== 'string') return;
                   const scriptPath = resolveScriptPath(hook.command, plugin.dir);
                   if (!scriptPath || !fileExists(scriptPath)) return;
