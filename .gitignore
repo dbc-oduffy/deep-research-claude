@@ -1,0 +1,5 @@
+# Coordinator universal
+# Scratch — transient agent output, investigation notes, workstream byproduct (universal coordinator rule).
+# `scratch/` matches at any depth (top-level scratch/, tasks/scratch/, etc.)
+scratch/
+tasks/_*.log
