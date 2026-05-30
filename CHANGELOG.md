@@ -2,6 +2,15 @@
 
 All notable changes to the deep-research plugin are documented here.
 
+## [1.4.0] - 2026-05-31
+
+Minor release. Adds an always-on post-synthesis coverage auditor across all four pipelines.
+
+### Added
+
+- **Coverage auditor** (`agents/coverage-auditor.md` + `pipelines/coverage-auditor-prompt-template.md`) — a fresh-eyes, non-teammate agent dispatched after every synthesis to answer "did the synthesis carry the research?" It reads specialist claim records, cross-references the synthesis, and emits a `-coverage-audit.md` sidecar; it never writes the synthesis output path. Always-on: no size floor, no opt-out.
+- **Specialist fidelity relay** — idle specialists are woken to verify their own content was faithfully represented in the synthesis. Wired across all four pipelines (web / repo / structured / notebooklm) as an internal synthesizer phase before team teardown; relay triggers are pipeline-specific (Pipeline D's relay is out of scope until D gains a depth concept).
+
 ## [1.3.1] - 2026-05-09
 
 Patch release. Scout hardening + small skill-surface tightening; no behavioral changes for end users.

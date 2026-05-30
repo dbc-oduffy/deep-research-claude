@@ -20,6 +20,7 @@ SCAN: notebooklm
 CLAUDE.md
 
 # Agent definitions
+agents/coverage-auditor.md
 agents/repo-scout.md
 agents/repo-specialist.md
 agents/research-scout.md
@@ -34,6 +35,7 @@ commands/setup.md
 
 # Pipelines
 pipelines/PIPELINE.md
+pipelines/coverage-auditor-prompt-template.md
 pipelines/spec-format.md
 pipelines/eval-rubric.md
 pipelines/gap-specialist-prompt-template.md
