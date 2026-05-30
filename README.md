@@ -17,7 +17,7 @@ This is a Claude Code plugin. The first-class install path is to hand the job to
 After the agent finishes, restart Claude Code (so the Agent Teams env var takes effect) and try:
 
 ```
-/deep-research web "agent orchestration patterns in LLM frameworks"
+/deep-research:research --mode=web "agent orchestration patterns in LLM frameworks"
 ```
 
 ## Pipelines
@@ -27,7 +27,7 @@ After the agent finishes, restart Claude Code (so the Agent Teams env var takes 
 Haiku scout builds a source corpus via web search. 3-5 Sonnet specialists deep-read sources, verify claims, and challenge each other adversarially. Opus sweep agent checks coverage, fills gaps, and writes the final document. An optional iterative deepening pass targets high-severity gaps identified in the first sweep.
 
 ```
-/deep-research web "topic"
+/deep-research:research --mode=web "topic"
 ```
 
 ### Pipeline B — Repository Research
@@ -35,7 +35,7 @@ Haiku scout builds a source corpus via web search. 3-5 Sonnet specialists deep-r
 2 Haiku scouts inventory every file in assigned chunks. 4 Sonnet specialists deep-read, analyze architecture, and optionally compare against a second project. Opus synthesizer writes the final assessment.
 
 ```
-/deep-research repo /path/to/repo [--compare /path/to/mine] [--deeper] [--deepest]
+/deep-research:research --mode=repo /path/to/repo [--compare /path/to/mine] [--survey] [--deeper] [--deepest]
 ```
 
 - `--compare` — gap-analysis artifact comparing target repo to your project
@@ -47,7 +47,7 @@ Haiku scout builds a source corpus via web search. 3-5 Sonnet specialists deep-r
 Schema-conforming batch research across N entities. Haiku scout maps findings to schema fields. 1-5 Sonnet verifiers challenge each other's values (CONFIRMED / UPDATED / REFUTED / CONTESTED). Opus synthesizer resolves contested fields and outputs validated YAML/JSON.
 
 ```
-/deep-research structured tasks/research/spec.yaml subject-key
+/deep-research:research --mode=structured tasks/research/spec.yaml subject-key
 ```
 
 ### Pipeline D — NotebookLM Research
@@ -64,9 +64,9 @@ Requires the [notebooklm-mcp-cli](https://github.com/jacob-bd/notebooklm-mcp-cli
 
 | Command | Pipeline |
 |---------|----------|
-| `/deep-research web <topic>` | Internet research with iterative deepening |
-| `/deep-research repo <path>` | Repository analysis (with optional `--compare`, `--deeper`, `--deepest`) |
-| `/deep-research structured <spec> <key>` | Schema-conforming batch research |
+| `/deep-research:research --mode=web <topic>` | Internet research with iterative deepening |
+| `/deep-research:research --mode=repo <path>` | Repository analysis (with optional `--compare`, `--survey`, `--deeper`, `--deepest`) |
+| `/deep-research:research --mode=structured <spec> <key>` | Schema-conforming batch research |
 | `/notebooklm-research <topic>` | NotebookLM media research |
 
 All pipelines are fire-and-forget — the EM spawns the team and is freed. Results are committed to `docs/research/` automatically.
@@ -84,7 +84,7 @@ All pipelines are fire-and-forget — the EM spawns the team and is freed. Resul
 
 ## Integration with coordinator
 
-This plugin works standalone. When used alongside the [coordinator plugin](https://github.com/dbc-oduffy/coordinator-claude), the EM automatically suggests research pipelines via a `PreToolUse` hook when Claude reaches for ad-hoc web search — nudging toward these structured pipelines instead of one-off `WebFetch` calls that consume the coordinator's context window.
+This plugin works standalone. When used alongside the [coordinator plugin](https://github.com/dbc-oduffy/coordinator-claude), a `PreToolUse` hook automatically suggests research pipelines when Claude reaches for ad-hoc web search — nudging toward these structured pipelines instead of one-off `WebFetch` calls that consume the coordinator's context window.
 
 ### Optional dependency: `coordinator-safe-commit`
 

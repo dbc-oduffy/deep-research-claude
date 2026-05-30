@@ -6,7 +6,7 @@
 
 A Claude Code plugin (`.claude-plugin/plugin.json` at the repo root). It ships:
 
-- `commands/` — slash commands (`/deep-research web|repo|structured`, `/deep-research setup`)
+- `commands/` — slash commands (`/deep-research:research --mode=web|repo|structured`, `/deep-research setup`)
 - `agents/` — scout / specialist / synthesizer definitions
 - `skills/`, `pipelines/` — supporting prompts and protocols
 - `notebooklm/` — optional sub-plugin for Pipeline D (media research)
@@ -99,7 +99,7 @@ Optionally remove `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` from `~/.claude/setting
 | Pipeline launches then immediately fails | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` not `1` | Set in `~/.claude/settings.json`, restart |
 | `/notebooklm-research` not found | NotebookLM sub-plugin disabled | Enable it in `~/.claude/settings.json` |
 | Pipeline D auth errors | NotebookLM session expired | User runs `nlm login` in their terminal |
-| `coordinator-safe-commit: command not found` mid-pipeline | Running standalone without coordinator plugin | See README "Standalone vs. coordinator" — substitute `git add <paths> && git commit -m ...` |
+| `coordinator-safe-commit: command not found` mid-pipeline | Running standalone without coordinator plugin | See README "Optional dependency: `coordinator-safe-commit`" — substitute `git add <paths> && git commit -m ...` |
 
 ## Manual install (humans)
 
