@@ -1,5 +1,12 @@
+# Normalize all text files to LF in index AND working tree. Eliminates the
+# Git-for-Windows core.autocrlf=true CRLF<->LF conversion nag. text=auto
+# auto-detects binaries and leaves them untouched.
+* text=auto eol=lf
+
 # Exclude internal benchmark artifacts and evidence docs from `git archive` exports.
 # These files reference private monorepo paths (X:/coordinator-claude/, X:/experiments/)
 # and aren't intended for downstream consumers.
 docs/research/pipeline-benchmark/ export-ignore
 docs/research/2026-03-31-deep-research-pipeline-evidence.md export-ignore
+*.cmd text eol=crlf
+*.bat text eol=crlf
