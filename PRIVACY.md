@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**deep-research** — a Claude Code plugin by [Dónal O'Duffy](https://github.com/dbc-oduffy)
+**deep-research** — a Claude Code plugin by [the PM O'Duffy](https://github.com/dbc-oduffy)
 
 Last updated: 2026-04-02
 

@@ -88,7 +88,7 @@ This plugin works standalone. When used alongside the [coordinator plugin](https
 
 ### Optional dependency: `coordinator-safe-commit`
 
-Pipeline commands (`/web`, `/repo`, `/structured`) invoke `~/.claude/plugins/coordinator-claude/coordinator/bin/coordinator-safe-commit` for phase-end commits. The helper provides scoped staging (per-session audit-trail integrity) for users running multiple concurrent agent sessions on the same branch.
+Pipeline commands (`/web`, `/repo`, `/structured`) invoke `~/.claude/plugins/coordinator/bin/coordinator-safe-commit` for phase-end commits. The helper provides scoped staging (per-session audit-trail integrity) for users running multiple concurrent agent sessions on the same branch.
 
 **If you have the coordinator plugin installed,** no action needed — the helper is on the expected path.
 
@@ -110,4 +110,4 @@ Pipeline D is built on [notebooklm-mcp-cli](https://github.com/jacob-bd/notebook
 
 ---
 
-[Dónal O'Duffy](https://github.com/dbc-oduffy) & Claude
+[the PM O'Duffy](https://github.com/dbc-oduffy) & Claude
