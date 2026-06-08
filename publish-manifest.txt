@@ -15,9 +15,14 @@ SCAN: commands
 SCAN: pipelines
 SCAN: skills
 SCAN: notebooklm
+SCAN: .claude-plugin
 
 # Config
 CLAUDE.md
+
+# Top-level plugin manifest — source-authoritative (F4, 2026-06-08).
+# Bump version + repository URL in source; percolate ships the change.
+.claude-plugin/plugin.json
 
 # Agent definitions
 agents/coverage-auditor.md
