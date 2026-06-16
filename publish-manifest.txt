@@ -36,7 +36,10 @@ agents/structured-synthesizer.md
 # Commands
 # (repo.md, structured.md, web.md collapsed into research.md --mode in v1.3.0)
 commands/research.md
-commands/setup.md
+commands/install.md
+
+# Cleanup from rename (2026-06-15): /deep-research:setup -> /deep-research:install
+DELETE: commands/setup.md
 
 # Pipelines
 pipelines/PIPELINE.md
@@ -66,15 +69,16 @@ pipelines/web-research-internals.md
 
 # Skills
 skills/eval-output.md
+skills/setup/SKILL.md
 
 # NotebookLM (Pipeline D)
 notebooklm/CLAUDE.md
 notebooklm/.claude-plugin/plugin.json
 notebooklm/.mcp.json
-notebooklm/agents/research-scout.md
+notebooklm/agents/notebooklm-research-scout.md
 notebooklm/agents/research-sweep.md
 notebooklm/agents/research-worker.md
-notebooklm/commands/research.md
+notebooklm/commands/notebooklm-research.md
 notebooklm/pipelines/team-protocol.md
 notebooklm/pipelines/scout-prompt-template.md
 notebooklm/pipelines/sweep-prompt-template.md
