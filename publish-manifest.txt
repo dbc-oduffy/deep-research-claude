@@ -16,6 +16,8 @@ SCAN: pipelines
 SCAN: skills
 SCAN: notebooklm
 SCAN: .claude-plugin
+SCAN: scripts
+SCAN: docs/install
 
 # Config
 CLAUDE.md
@@ -70,6 +72,23 @@ pipelines/web-research-internals.md
 # Skills
 skills/eval-output.md
 skills/setup/SKILL.md
+
+# Install-chain contract (chain step 4 of 5 — leaf-bootstrap walkable).
+# The agent-install-manifest declares standalone_setup_script: scripts/setup.{sh,ps1};
+# these resolve at the flat publish-repo root (no layout transform — DR publishes flat,
+# unlike coordinator which nests under coordinator/). The chain-walker sources scripts/lib/*.
+# Added 2026-06-17 to land the manifest pair on the OSS mirror (the gap project-rag-em flagged).
+docs/install/agent-install-manifest.json
+docs/install/agent-install-manifest.schema.json
+docs/install/AGENT.md
+scripts/setup.sh
+scripts/setup.ps1
+scripts/lib/chain_walker_subagent_prompt.txt
+scripts/lib/dep_check.ps1
+scripts/lib/dep_check.sh
+scripts/lib/dep_consent_banner.txt
+scripts/lib/manifest_reader.ps1
+scripts/lib/manifest_reader.sh
 
 # NotebookLM (Pipeline D)
 notebooklm/CLAUDE.md

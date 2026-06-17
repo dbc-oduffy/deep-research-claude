@@ -1,0 +1,27 @@
+{
+  "agent_install_contract_version": 2,
+  "repo_id": "deep-research-claude",
+  "setup_skill": "/deep-research:setup",
+  "standalone_setup_script": {
+    "posix": "scripts/setup.sh",
+    "windows": "scripts/setup.ps1"
+  },
+  "direct_deps": [
+    {
+      "id": "coordinator-claude",
+      "severity": "soft",
+      "sibling_dir_name": "coordinator-claude",
+      "upstream_url": "https://github.com/dbc-oduffy/coordinator-claude",
+      "functional_probe": {
+        "kind": "file_exists",
+        "path": "plugins/coordinator/CLAUDE.md"
+      },
+      "consumer_install_args": []
+    }
+  ],
+  "required_env_vars": [],
+  "override_flags": {
+    "skip_dep_check": "--skip-dep-check",
+    "accept_hallucination_risk": "--accept-missing-deps-risk"
+  }
+}
