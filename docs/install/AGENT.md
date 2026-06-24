@@ -94,5 +94,5 @@ All pipelines require `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `settings.json
 
 ---
 
-<!-- spec-backlink: docs/plans/2026-06-15-deep-research-install-chain-application-phase-b.md §7 C1 -->
+<!-- spec-backlink: archive/specs/2026-06/2026-06-15-deep-research-install-chain-application-phase-b.md §7 C1 -->
 <!-- spec-backlink: plugins/coordinator/docs/wiki/agent-install-contract.md -->

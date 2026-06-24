@@ -3,8 +3,8 @@
   "repo_id": "deep-research-claude",
   "setup_skill": "/deep-research:setup",
   "standalone_setup_script": {
-    "posix": "scripts/setup.sh",
-    "windows": "scripts/setup.ps1"
+    "posix": "deep-research/scripts/setup.sh",
+    "windows": "deep-research/scripts/setup.ps1"
   },
   "direct_deps": [
     {
@@ -14,7 +14,7 @@
       "upstream_url": "https://github.com/dbc-oduffy/coordinator-claude",
       "functional_probe": {
         "kind": "file_exists",
-        "path": "plugins/coordinator/CLAUDE.md"
+        "path": "coordinator/CLAUDE.md"
       },
       "consumer_install_args": []
     }

@@ -41,6 +41,13 @@ param(
     [switch]$IAmAgent,                  # agent mode: exit 92 with AGENT_MANIFEST_PATH
     [switch]$Help,                      # read-only: print usage and exit 0
     [switch]$Version,                   # read-only: print script version and exit 0
+
+    # -Phase <name> vs -PhaseList prefix-collision: PowerShell resolves "-Phase foo" as an
+    # exact match for [string]$Phase, NOT a prefix of [switch]$PhaseList. Exact-match wins;
+    # "-PhaseList" (no value) binds exactly to [switch]$PhaseList. Mirrors coordinator setup.ps1.
+    [Parameter()]
+    [string]$Phase = '',                # dispatch named install phase; chain-preinstall is stateful/gated
+
     [switch]$PhaseList,                 # read-only: list install phases and exit 0
     [switch]$LastStatus                 # read-only: print last install status JSON and exit 0
 )
@@ -54,6 +61,11 @@ $ScriptVersion = '1.0.0'
 $ScriptName    = 'deep-research-claude setup'
 $ChainStep     = 'chain step 4 of 5'
 $ChainBanner   = "DR install-chain walker -- $ChainStep"
+
+# chain-preinstall is stateful-by-contract (NOT in the read-only carve-out): the -Phase
+# switch sets this marker instead of exiting inline, so the post-parse agent/token gate
+# decides exit 92 vs no-op body. Mirrors setup.sh _RUN_CHAIN_PREINSTALL.
+$RunChainPreinstall = $false
 
 # ---------------------------------------------------------------------------
 # Locate this script and resolve RepoRoot (layout-agnostic).
@@ -117,6 +129,11 @@ if ($Help) {
     Write-Host "  -Help                    Print this help and exit."
     Write-Host "  -Version                 Print script version and exit."
     Write-Host "  -PhaseList               List install phases and exit."
+    Write-Host "  -Phase <name>            Dispatch named install phase and exit."
+    Write-Host "                           Stateful phases (gated): chain-preinstall — pre-restart full-install"
+    Write-Host "                             seam; requires `$env:COORDINATOR_CHAIN_PREINSTALL_CONSENT (or the override pair)"
+    Write-Host "                             in agent mode; no-op body (DR is pure-plugin)."
+    Write-Host "                           Unknown phase values exit non-zero (fail-loud)."
     Write-Host "  -LastStatus              Print last install status JSON and exit."
     Write-Host "  -Check                   Read-only dep probe + status report. No state written."
     Write-Host "                           DR-specific read-only extension (chain step 4 of 5)."
@@ -135,13 +152,41 @@ if ($Version) {
 }
 
 if ($PhaseList) {
-    Write-Host "dep-check:  probe coordinator-claude soft dep and report status"
+    Write-Host "Available -Phase <name> values:"
+    Write-Host "  chain-preinstall  Pre-restart full-install seam (stateful-by-contract; gated by `$env:COORDINATOR_CHAIN_PREINSTALL_CONSENT in agent mode; no-op body -- DR is pure-plugin)"
+    Write-Host ""
+    Write-Host "Informational (NOT -Phase <name> values):"
+    Write-Host "  dep-check:  probe coordinator-claude soft dep and report status"
     exit 0
 }
 
 if ($LastStatus) {
     Write-Host '{"overall": "no-prior-install"}'
     exit 0
+}
+
+# ---------------------------------------------------------------------------
+# -Phase <name> dispatch (parity with setup.sh --phase <name>).
+# chain-preinstall is stateful-by-contract: set the marker and fall through to
+# the post-parse agent/token gate; do NOT exit inline. DR has no
+# seed-install-spinoff (coordinator seeds DR's spinoff from a template).
+# ---------------------------------------------------------------------------
+if ($Phase -ne '') {
+    if ($Phase -like '--*') {
+        [Console]::Error.WriteLine("ERROR: -Phase requires a phase name, but got a flag-shaped value ('$Phase'). Did you forget the phase name?")
+        exit 1
+    }
+    switch ($Phase) {
+        'chain-preinstall' {
+            $RunChainPreinstall = $true
+        }
+        default {
+            [Console]::Error.WriteLine("ERROR: Unknown -Phase value: '$Phase'")
+            [Console]::Error.WriteLine("  Known phases: chain-preinstall")
+            [Console]::Error.WriteLine("  Use -PhaseList to enumerate all known phase names.")
+            exit 1
+        }
+    }
 }
 
 # ---------------------------------------------------------------------------
@@ -169,22 +214,93 @@ $AddonRunMode = $env:ADDON_RUN_MODE
 if ($IAmAgent -or $AddonRunMode -eq 'agent') {
     if ($SkipDepCheck -and $AcceptMissingDepsRisk) {
         # full override pair present — fall through
+    } elseif ($RunChainPreinstall -and -not [string]::IsNullOrEmpty($env:COORDINATOR_CHAIN_PREINSTALL_CONSENT)) {
+        # chain-preinstall phase inside a consented chain walk — fall through.
+        # The consent token is the same trust altitude as the override pair (a deliberate
+        # redirect-guard escape, not a capability token). agent-install-contract.md § chain-preinstall.
     } else {
         [Console]::Error.WriteLine("AGENT_MANIFEST_PATH=docs/install/AGENT.md")
         [Console]::Error.WriteLine("[setup] Agent-direct invocation detected. Use /deep-research:setup instead.")
         [Console]::Error.WriteLine("[setup] Agent install guide: docs/install/AGENT.md")
-        [Console]::Error.WriteLine("[setup] To run non-interactively, supply both:")
-        [Console]::Error.WriteLine("[setup]   -IAmAgent -SkipDepCheck -AcceptMissingDepsRisk")
+        if ($RunChainPreinstall) {
+            [Console]::Error.WriteLine("[setup] -Phase chain-preinstall requires a consented chain walk:")
+            [Console]::Error.WriteLine("[setup]   set `$env:COORDINATOR_CHAIN_PREINSTALL_CONSENT (the chain-walk token) -- or supply the override pair")
+            [Console]::Error.WriteLine("[setup]   -IAmAgent -SkipDepCheck -AcceptMissingDepsRisk")
+        } else {
+            [Console]::Error.WriteLine("[setup] To run non-interactively, supply both:")
+            [Console]::Error.WriteLine("[setup]   -IAmAgent -SkipDepCheck -AcceptMissingDepsRisk")
+        }
         exit 92
     }
 }
 
 # ---------------------------------------------------------------------------
+# chain-preinstall phase body (post-gate). DR is a pure coordinator-plugin with
+# no script-install body, so chain-preinstall is a no-op here -- it still routes
+# THROUGH the gate above (phase-level gate, uniform across legs), then exits 0.
+# ---------------------------------------------------------------------------
+if ($RunChainPreinstall) {
+    Write-Host "deep-research-claude: chain step 4 of 5 -- nothing to preinstall (chain-preinstall no-op body; pure-plugin, no script-install). Capability install happens at downstream heavy-install legs."
+    exit 0
+}
+
+# ---------------------------------------------------------------------------
 # Python resolver — required for manifest read and dep probing.
+#
+# Functional probe: each candidate is actually EXECUTED to confirm it is a
+# working Python >= 3.11. This catches the Windows 11 WindowsApps Store stub
+# (python3.exe / python.exe App Execution alias) which passes Get-Command but
+# exits non-zero with "Python was not found" when run — a Get-Command-only
+# probe would select the stub and fail at every subsequent Python call.
+#
+# Candidate order: python3 → python → py launcher (Windows only).
+# The py launcher can dispatch a real CPython installation even when the
+# WindowsApps aliases shadow python3/python on PATH.
+#
+# Returns: a string command name (or invocation) that functionally works as
+# Python 3.11+. Returns $null when no working interpreter is found.
+#
+# Parity with: coordinator scripts/lib/manifest_reader.sh _co_find_python
+# PS parity landed 2026-06-23.
 # ---------------------------------------------------------------------------
 function Find-Python {
-    if (Get-Command python3 -ErrorAction SilentlyContinue) { return 'python3' }
-    if (Get-Command python  -ErrorAction SilentlyContinue) { return 'python' }
+    $versionCheck = 'import sys; sys.exit(0 if sys.version_info[:2] >= (3,11) else 1)'
+
+    # Helper: return $true if $candidate is a working Python >= 3.11.
+    function Test-PythonCandidate([string]$Candidate) {
+        if (-not (Get-Command $Candidate -ErrorAction SilentlyContinue)) { return $false }
+        try {
+            & $Candidate -c $versionCheck 2>$null
+            return ($LASTEXITCODE -eq 0)
+        } catch {
+            return $false
+        }
+    }
+
+    if (Test-PythonCandidate 'python3') { return 'python3' }
+    if (Test-PythonCandidate 'python')  { return 'python'  }
+
+    # Windows py launcher — resolves the Store-stub problem by dispatching
+    # through the Python Launcher for Windows (py.exe), which bypasses the
+    # WindowsApps aliases entirely.
+    if (Get-Command 'py' -ErrorAction SilentlyContinue) {
+        foreach ($pyVer in @('-3.12', '-3.11', '-3', '')) {
+            try {
+                $pyArgs = if ($pyVer -ne '') { @($pyVer, '-c', $versionCheck) } else { @('-c', $versionCheck) }
+                & py @pyArgs 2>$null
+                if ($LASTEXITCODE -eq 0) {
+                    # Resolve to a concrete executable path so callers get a
+                    # single token they can invoke with `& $PythonBin -c "..."`.
+                    $resolveArgs = if ($pyVer -ne '') { @($pyVer, '-c', 'import sys;print(sys.executable)') } else { @('-c', 'import sys;print(sys.executable)') }
+                    $resolved = (& py @resolveArgs 2>$null | Out-String).Trim()
+                    if ($resolved -and (Test-Path $resolved)) { return $resolved }
+                    # Fallback: return the py invocation as a string (caller must expand).
+                    if ($pyVer -ne '') { return "py $pyVer" } else { return 'py' }
+                }
+            } catch {}
+        }
+    }
+
     return $null
 }
 
@@ -210,8 +326,13 @@ if ($Check) {
 
     $PythonBin = Find-Python
     if (-not $PythonBin) {
-        [Console]::Error.WriteLine("ERROR: no Python interpreter found on PATH (tried python3, python).")
+        [Console]::Error.WriteLine("ERROR: no functional Python 3.11+ interpreter found on PATH (tried python3, python, py launcher).")
         [Console]::Error.WriteLine("  Python 3.11+ is required to read the install manifest.")
+        [Console]::Error.WriteLine("  On Windows: if python3/python exist but are non-functional, disable the")
+        [Console]::Error.WriteLine("    WindowsApps python/python3 App Execution aliases in:")
+        [Console]::Error.WriteLine("    Settings > Apps > App execution aliases")
+        [Console]::Error.WriteLine("    then install real Python 3.11+ from https://www.python.org/downloads/")
+        [Console]::Error.WriteLine("  Alternatively, install the Python Launcher (py.exe) from https://www.python.org/downloads/")
         exit 1
     }
 
@@ -224,13 +345,13 @@ if ($Check) {
         exit 0
     }
 
-    # Read deps via manifest reader script (scripts\lib\manifest_reader.ps1 — parity with _dr_manifest_read_ndjson in .sh).
+    # Read deps via manifest reader script (scripts\lib\manifest_reader.ps1 — parity with _co_manifest_read_ndjson in scripts/lib/coordinator_prereq/manifest_reader.sh).
     $NdjsonLines = $null
     try {
         if (Test-Path $ManifestReadPs1) {
             $NdjsonLines = & $ManifestReadPs1 -ManifestPath $ManifestPath
         } else {
-            # Fallback: read manifest with Python directly (mirrors sh _dr_manifest_read_ndjson body).
+            # Fallback: read manifest with Python directly (mirrors sh _co_manifest_read_ndjson body).
             $NdjsonLines = & $PythonBin -c @"
 import json, sys, os
 manifest_path = sys.argv[1]
@@ -359,7 +480,13 @@ Write-Host ""
 # Python pre-flight (required for manifest read).
 $PythonBin = Find-Python
 if (-not $PythonBin) {
-    [Console]::Error.WriteLine("ERROR: no Python interpreter found on PATH (tried python3, python).")
+    [Console]::Error.WriteLine("ERROR: no functional Python 3.11+ interpreter found on PATH (tried python3, python, py launcher).")
+    [Console]::Error.WriteLine("  Python 3.11+ is required to read the install manifest.")
+    [Console]::Error.WriteLine("  On Windows: if python3/python exist but are non-functional, disable the")
+    [Console]::Error.WriteLine("    WindowsApps python/python3 App Execution aliases in:")
+    [Console]::Error.WriteLine("    Settings > Apps > App execution aliases")
+    [Console]::Error.WriteLine("    then install real Python 3.11+ from https://www.python.org/downloads/")
+    [Console]::Error.WriteLine("  Alternatively, install the Python Launcher (py.exe) from https://www.python.org/downloads/")
     exit 1
 }
 
@@ -380,6 +507,7 @@ if ($AcceptMissingDepsRisk){ $ParsedArgsList.Add('--accept-missing-deps-risk') }
 if ($IAmAgent)             { $ParsedArgsList.Add('--i-am-agent') }
 if ($Help)                 { $ParsedArgsList.Add('--help') }
 if ($Version)              { $ParsedArgsList.Add('--version') }
+if ($Phase -ne '')         { $ParsedArgsList.Add("--phase"); $ParsedArgsList.Add($Phase) }
 if ($PhaseList)            { $ParsedArgsList.Add('--phase-list') }
 if ($LastStatus)           { $ParsedArgsList.Add('--last-status') }
 

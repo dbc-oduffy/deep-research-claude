@@ -2,6 +2,27 @@
 
 All notable changes to the deep-research plugin are documented here.
 
+## [1.5.0] - 2026-06-24
+
+Minor release. Brings the deep-research install flow to parity with the coordinator agent-install chain, and migrates the NotebookLM (Pipeline D) MCP launch to a working transport.
+
+### Added
+
+- **Agent-install chain parity with coordinator.** `/deep-research:setup` is now the install-chain walker (the prior scaffolding verb was renamed `/deep-research:install`), matching the ecosystem-wide `/<plugin>:setup` walker convention. `scripts/setup.{sh,ps1}` gained `--phase` dispatch (deep-research's first), a chain-preinstall consent gate (`COORDINATOR_CHAIN_PREINSTALL_CONSENT`), and Available/Informational phase-list headers. The agent-install manifest, schema, and `AGENT.md` were expanded to the v3 contract.
+- **DR capability probe** (`scripts/lib/dr_capability_probe.sh`) — a deep-research-authored preflight reporting `agent_teams` / `web_access` / `pipelines_present` / `notebooklm` / `python` readiness, composed into a 3-section `--preflight` output (capabilities first, environment prereqs filtered to what deep-research needs).
+- **Vendored coordinator prereq unit** (`scripts/lib/coordinator_prereq/{prereq_probe,manifest_reader,step_zero_emit}.sh`) — byte-identical copies of the coordinator SSOT, kept in sync by `bin/verify-prereq-probe-sync.sh`. deep-research is now named as the second downstream vendor in the coordinator source headers.
+
+### Changed
+
+- **NotebookLM MCP launch migrated from `npx` to `uvx`.** The prior `npx`-based launch was broken (the server is a Python package); Pipeline D now launches via `uvx`. NotebookLM **v0.7.8 capabilities** were adopted into Pipeline D (including `cross_notebook_query` for single-call cross-notebook verification in the coverage auditor).
+- **`python3`-first interpreter resolution** across the setup scripts, with the PowerShell `Find-Python` hardened to coordinator parity (functional probe + py-launcher, Windows-Store-stub-safe). Killed a `validate` silent-bypass.
+- **Research scratch moved to `docs/research/{run-id}-{slug}-workdir`** — out of the prior kill-zone path.
+
+### Fixed
+
+- **Coverage auditor Workflow-dispatch persistence.** The auditor gained a `Bash` heredoc write-fallback so its `-coverage-audit.md` sidecar still lands on disk when dispatched inside a `Workflow()` (where subagent `Write` is denied), not only under Agent Teams.
+- **Console-flash production findings cleared repo-wide** (PM-directed `verify-no-powershell-flash` sweep) and the `quota-tripwire` snippet propagated to 45 agents.
+
 ## [1.4.0] - 2026-05-31
 
 Minor release. Adds an always-on post-synthesis coverage auditor across all four pipelines.

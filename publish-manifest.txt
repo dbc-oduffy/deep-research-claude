@@ -87,8 +87,14 @@ scripts/lib/chain_walker_subagent_prompt.txt
 scripts/lib/dep_check.ps1
 scripts/lib/dep_check.sh
 scripts/lib/dep_consent_banner.txt
+scripts/lib/dr_capability_probe.sh
 scripts/lib/manifest_reader.ps1
-scripts/lib/manifest_reader.sh
+# Prereq probe unit vendored from coordinator (byte-identical SSOT); setup.sh sources
+# manifest_reader.sh + prereq_probe.sh from coordinator_prereq/, prereq_probe self-sources
+# step_zero_emit.sh from the same isolated dir (nested-layout, 2026-06-23 reorg).
+scripts/lib/coordinator_prereq/manifest_reader.sh
+scripts/lib/coordinator_prereq/prereq_probe.sh
+scripts/lib/coordinator_prereq/step_zero_emit.sh
 
 # NotebookLM (Pipeline D)
 notebooklm/CLAUDE.md
